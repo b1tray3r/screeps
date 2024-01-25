@@ -1,126 +1,60 @@
 module.exports = function () {
-  Spawn.prototype.analyze = function () {
-    // run garbage collection
-    if (Game.time % 100 == 0) {
-      for (var name in Memory.creeps) {
-        if (!Game.creeps[name]) {
-          delete Memory.creeps[name];
+  Spawn.prototype.getNextSpawn = function (controllerLevel) {
+    const creepDefs = {
+      harvester: {
+        memory: { role: "harvester", working: false },
+        level: {
+          1: { body: [WORK, CARRY, MOVE], amount: 8 },
+          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
+          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
+          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
+          5: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
+          6: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
+          7: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
+          8: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
         }
-      }
-    }
-
-    if (this.spawning) {
-      var spawningCreep = Game.creeps[this.spawning.name];
-      this._say("🛠️");
-      return;
-    }
-
-    return this.getNextSpawn();
-  };
-
-  Spawn.prototype._say = function (message) {
-    this.room.visual.text(message, this.pos.x + 1, this.pos.y, {
-      align: "left",
-      opacity: 0.8,
-    });
-  };
-
-  Spawn.prototype.getNextSpawn = function () {
-    let queue = this.getQueue();
-
-    for (var role in queue) {
-      let creep = queue[role];
-
-      let creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role);
-
-      if (creeps.length < creep.count) {
-        this._say("🛠️");
-        return {
-          body: creep.body,
-          memory: creep.memory,
-        };
-      }
-    }
-  };
-
-  Spawn.prototype.getQueue = function () {
-    const queue = {
-      1: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 1,
-          body: [WORK, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
       },
-      2: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 2,
-          body: [WORK, CARRY, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
+      hauler: {
+        memory:  { role: "hauler", working: false,},
+        level: {
+          1: { body: [], amount: 0 },
+          2: { body: [], amount: 0 },
+          3: { body: [], amount: 0 },
+          4: { body: [], amount: 0 },
+          5: { body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], amount: 6},
+          6: { body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], amount: 6},
+          7: { body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], amount: 6},
+          8: { body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], amount: 6},
+        }
       },
-      3: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 2,
-          body: [WORK, CARRY, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
-      },
-      4: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 2,
-          body: [WORK, CARRY, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
-      },
-      5: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 2,
-          body: [WORK, CARRY, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
-      },
-      6: {
-        harvester: {
-          count: 10,
-          body: [WORK, CARRY, MOVE, MOVE],
-          memory: { role: "harvester", working: false },
-        },
-        upgrader: {
-          count: 2,
-          body: [WORK, CARRY, CARRY, MOVE],
-          memory: { role: "upgrader", working: false },
-        },
+      upgrader: {
+        memory:  { role: "upgrader", working: false,},
+        level: {
+          1: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          2: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          3: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          4: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          5: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          6: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          7: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          8: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+        }
       },
     };
 
-    let controllerLevel = this.room.controller.level;
+    for (let role in creepDefs){
+      let creeps = _.filter(Game.creeps, (creep) => creep.memory.role == role);
+      let desired = creepDefs[role].level[controllerLevel].amount;
+      
+      if (desired == 0) {
+        continue;
+      }
+    
+      let body = creepDefs[role].level[controllerLevel].body;
 
-    return queue[controllerLevel];
+      if (creeps.length < desired){
+        return {memory: creepDefs[role].memory, body: body};
+      }
+    }
   };
 };

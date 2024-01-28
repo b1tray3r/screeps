@@ -4,12 +4,12 @@ module.exports = function () {
       harvester: {
         memory: { role: "harvester", working: false },
         level: {
-          1: { body: [WORK, CARRY, MOVE], amount: 8 },
-          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
-          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
-          2: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
-          5: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
-          6: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
+          1: { body: [WORK, CARRY, MOVE], amount: 6 },
+          2: { body: [WORK, WORK, CARRY, MOVE], amount: 6 },
+          3: { body: [WORK, WORK, CARRY, MOVE], amount: 6 },
+          4: { body: [WORK, WORK, CARRY, MOVE], amount: 8 },
+          5: { body: [WORK, WORK, WORK, CARRY, MOVE], amount: 4},
+          6: { body: [WORK, WORK, WORK, CARRY, MOVE], amount: 4},
           7: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
           8: { body: [WORK, WORK, WORK, WORK, MOVE], amount: 4},
         }
@@ -30,9 +30,9 @@ module.exports = function () {
       upgrader: {
         memory:  { role: "upgrader", working: false,},
         level: {
-          1: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
-          2: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
-          3: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          1: { body: [WORK, CARRY, CARRY, MOVE], amount: 2},
+          2: { body: [WORK, CARRY, CARRY, MOVE], amount: 2},
+          3: { body: [WORK, CARRY, CARRY, MOVE], amount: 2},
           4: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
           5: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
           6: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
@@ -40,6 +40,20 @@ module.exports = function () {
           8: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
         }
       },
+      builder: {
+        memory:  { role: "builder", working: false,},
+        level: {
+          1: { body: [WORK, CARRY, MOVE], amount: 2},
+          2: { body: [WORK, CARRY, MOVE], amount: 2},
+          3: { body: [WORK, WORK, CARRY, MOVE], amount: 4},
+          4: { body: [WORK, WORK, CARRY, CARRY, MOVE], amount: 2},
+          5: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          6: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          7: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+          8: { body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], amount: 2},
+        }
+      },
+
     };
 
     for (let role in creepDefs){

@@ -37,6 +37,10 @@ module.exports = function () {
   };
 
   StructureController.prototype.planRoads = function () {
+    if (Memory.rooms[this.room.name].mustBuildRoads == undefined) {
+      Memory.rooms[this.room.name].mustBuildRoads = true;
+    }
+
     if (!Memory.rooms[this.room.name].mustBuildRoads) {
       return;
     }
@@ -67,6 +71,31 @@ module.exports = function () {
         this.room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
       }
     }
+    
+    for (let i = 0; i < energySources.length; i++) {
+      let pos = energySources[i].pos;
+      let path = Game.rooms[this.room.name].findPath(controllerLocation, pos, {
+        ignoreCreeps: true,
+      });
+
+      for (let i = 0; i < path.length; i++) {
+        let pos = path[i];
+        this.room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
+      }
+    }
+
+    let extensions = this.room.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_EXTENSION } });
+    for (let i = 0; i < extensions.length; i++) {
+      let pos = extensions[i].pos;
+      let path = Game.rooms[this.room.name].findPath(controllerLocation, pos, {
+        ignoreCreeps: true,
+      });
+
+      for (let i = 0; i < path.length; i++) {
+        let pos = path[i];
+        this.room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
+      }
+    }
 
     let minerals = this.room.find(FIND_MINERALS);
     for (let i = 0; i < minerals.length; i++) {
@@ -84,17 +113,34 @@ module.exports = function () {
     Memory.rooms[this.room.name].mustBuildRoads = false;
   };
 
-  StructureController.prototype.queueCreep = function () {
-    let spawn = this.room.find(FIND_MY_SPAWNS)[0];
-    let next = spawn.getNextSpawn(this.level);
+  StructureController.prototype.planExtensions = function () {
+    let flag = Game.flags["extensions"];
+    if (!flag) {
+      return;
+    }
+    for (let j = 0; j <= 5; j++) {
+      for (let i = 0; i <= 5; i++) {
+        let x = flag.pos.x + i;
+        let y = flag.pos.y + j;
+        this.room.createConstructionSite(x, y, STRUCTURE_EXTENSION);
+      }
+    }
+  };
 
-    if (next) {
-      let name = spawn.spawnCreep(next.body, next.memory.role + Game.time, {
-        memory: {
-          role: next.memory.role,
-          working: next.memory.working,
-        },
-      });
+  StructureController.prototype.queueCreep = function () {
+    let spawns = this.room.find(FIND_MY_SPAWNS);
+    for (const spawn of spawns) {
+      let next = spawn.getNextSpawn(this.level);
+
+      if (next) {
+        spawn.spawnCreep(next.body, next.memory.role + Game.time, {
+          memory: {
+            role: next.memory.role,
+            working: next.memory.working,
+          },
+        });
+
+      }
     }
   };
 };

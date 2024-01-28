@@ -10,17 +10,7 @@ module.exports = {
   },
 
   getTarget: function(creep) {
-    let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-      filter: (s) => {
-        return (
-          (s.structureType == STRUCTURE_EXTENSION ||
-            s.structureType == STRUCTURE_SPAWN) &&
-            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-        );
-      },
-    });
-
-    return target;
+    return creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
   },
 
   run: function(creep) {
@@ -33,12 +23,10 @@ module.exports = {
     } else {
       let target = this.getTarget(creep);
 
-      if(!target){
-        target = creep.room.controller;
-      }
-
-      if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(target);
+      if(target){
+        if (creep.build(target) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(target);
+        }
       }
     }
   }

@@ -6,20 +6,19 @@ require("prototype.Controller")();
 
 Memory.rooms = {};
 for (var name in Game.rooms) {
-  let room = Game.rooms[name];
-  Memory.rooms[name] = {mustBuildRoads: true};
+  Memory.rooms[name] = { mustBuildRoads: true };
 }
 
-module.exports.loop = function () {
+module.exports.loop = function() {
   for (var name in Game.rooms) {
     let room = Game.rooms[name];
 
     room.controller.visualize();
     room.controller.planRoads();
-
+    room.controller.planExtensions();
     room.controller.queueCreep();
 
-    //room.controller.removeConstructionSites();
+    // room.controller.removeConstructionSites();
   }
 
   for (var creepName in Game.creeps) {
